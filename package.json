@@ -1,0 +1,27 @@
+{
+  "name": "use_javascript_solve_logic_question",
+  "version": "1.0.0",
+  "description": "The solutions for leetcode &amp; interview question &amp; Brain-teasers, etc. with code and my simple explanations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yangzj1992/Use-Javascript-Solve-Logic-Questions.git"
+  },
+  "author": "yangzj1992",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yangzj1992/Use-Javascript-Solve-Logic-Questions/issues"
+  },
+  "homepage": "https://github.com/yangzj1992/Use-Javascript-Solve-Logic-Questions#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^1.1.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
