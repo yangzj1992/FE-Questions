@@ -31,3 +31,5 @@ var twoSum = function(nums, target) {
     a[nums[i]] = i;
   }
 };
+
+console.log(twoSum([2,9,7,11],20))
