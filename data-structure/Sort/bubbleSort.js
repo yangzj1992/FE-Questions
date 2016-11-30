@@ -34,7 +34,7 @@ const bubbleSort2 = (arr) => {
   return arr;
 }
 
-const bubbleSort3 = (arr) => {
+const cooktailSort = (arr) => {
   console.time('鸡尾酒排序耗时');
   let min = 0;
   let max = arr.length - 1;
@@ -64,6 +64,6 @@ let arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
 console.log('原始数据: [' + arr + ']'); 
 console.log(bubbleSort(arr));
 console.log(bubbleSort2(arr));
-console.log(bubbleSort3(arr));
+console.log(cooktailSort(arr));
 
 
