@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+
+<style type="text/css" media="screen">
+#field{width:500px;height:510px;background:black;position:relative}
+.bar{position:absolute;bottom:0;background:orange;border:1px solid brown;width:48px}
+</style>
+<body>
+  <div id=field>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+    <div class=bar></div>
+  </div>
+</body>
+<script>
+!function(d){
+
+  var bars = [].slice.call(d.querySelectorAll('.bar'));
+  var arr = [8, 10, 3, 5, 6, 9, 2, 4, 7, 1];
+  var state = [];
+
+  var draw = function(){
+    var bar, s;
+    s = state.shift() || [];
+    for(bar in bars){
+      bars[bar].style.height = 50 * s[bar] + 'px';
+      bars[bar].style.left = 50 * bar + 'px';
+    }
+  }
+
+  var sort = function(arr){
+    for(var i = 0; i < arr.length; i++){
+      for(var j = 0; j < arr.length - i - 1; j++){
+        if(arr[j] > arr[j+1]){
+          arr[j]   = arr[j] + arr[j+1];
+          arr[j+1] = arr[j] - arr[j+1];
+          arr[j]   = arr[j] - arr[j+1];
+          state.push(JSON.parse(JSON.stringify(arr)));
+        }
+      }
+    }
+  }
+
+  sort(arr);
+  setInterval(draw, 500);
+
+}(document)
+</script>
+</html>
