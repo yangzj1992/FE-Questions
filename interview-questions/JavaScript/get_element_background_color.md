@@ -34,7 +34,7 @@ window.getComputedStyle("元素", "伪类");
 
 注意：Firefox和Safari会将颜色转换成rgb格式，如果test节点上没有任何样式，通过style.length来查看浏览器默认样式的个数。IE6-8 不支持该方法，需要使用下面的方法
 
-3、ele.currentStyle
+3. ele.currentStyle
 
 `currentStyle` 是 IE 浏览器自己的一个属性，其语法与 `ele.style` 类似，差别在于 `element.currentStyle` 返回的是元素当前应用的最终 CSS 属性值（包括外链 CSS 文件，页面中嵌入的 <style> 属性等）。
 
@@ -47,14 +47,14 @@ var style = dom.currentStyle;
 例子：
 
 ``` js
-        var test = document.getElementById("test"),
-        demo = test.currentStyle; 
-        demo.color; 
+  var test = document.getElementById("test"),
+  demo = test.currentStyle; 
+  demo.color; 
 ```
 
 注意：对于综合属性 border 等，ie 返回 undefined，其他浏览器有的返回值，有的不返回，但是 borderLeftWidth 这样的属性是返回值的
 
-4、getPropertyValue()
+4. getPropertyValue()
 
 `getPropertyValue` 获取 CSS 样式的直接属性名称
 
