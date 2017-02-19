@@ -42,6 +42,9 @@ doSomething().then(function(){
 }).then(finalHandler)
 
 /*
+  正常的 Promise 用法。
+
+  执行顺序：
   doSomething
     doSomethingElse(undefined)
       finalHandler(resultofdoSomethingElse)
@@ -52,6 +55,8 @@ doSomething().then(function(){
 }).then(finalHandler)
 
 /*
+  因为没有 return，doSomethingElse 在 doSomething 执行完后异步执行的。
+
   doSomething
     doSomethingElse(undefined)
     finalHandler(undefined)
@@ -85,6 +90,8 @@ doSomething().then(doSomethingElse)
   .then(finalHandler)
 
 /*
+  doSomethingElse 作为 then 参数传入不会发生值穿透，并返回一个 promise ，所以会顺序执行。
+
   doSomething
     doSomethingElse(resultofdoSomething)
       finalHandler(resultofdoSomethingElse)
@@ -92,3 +99,55 @@ doSomething().then(doSomethingElse)
 
 
 ```
+
+demo 
+
+``` js
+function doSomething() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('something')
+    }, 1000)
+  })
+}
+
+function doSomethingElse() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('somethingElse')
+    }, 1500)
+  })
+}
+
+console.time('case 1')
+doSomething().then(() => {
+  return doSomethingElse()
+}).then(function finalHandler(res) {
+  console.log(res) // somethingElse
+  console.timeEnd('case 1') // case 1: 2505.606ms
+})
+
+console.time('case 2')
+doSomething().then(function () {
+  doSomethingElse()
+}).then(function finalHandler(res) {
+  console.log(res) // undefined 
+  console.timeEnd('case 2')  // case 2: 1004.616ms
+})
+
+
+console.time('case 3')
+doSomething().then(doSomethingElse())
+  .then(function finalHandler(res) {
+    console.log(res) // something
+    console.timeEnd('case 3') // case 3: 1005.830ms
+  })
+
+console.time('case 4')
+doSomething().then(doSomethingElse)
+  .then(function finalHandler(res) {
+    console.log(res) // somethingElse
+    console.timeEnd('case 4') // case 4: 2507.112ms
+  })
+```
+

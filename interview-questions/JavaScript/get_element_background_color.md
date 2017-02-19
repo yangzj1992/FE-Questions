@@ -2,7 +2,10 @@ Q : 用JS代码求出页面上一个元素的最终的background-color，不考�
 
 获取最终应用在元素上的所有CSS属性对象的意思是，如果没有给元素设置任何样式，也会把浏览器默认的样式返回来。
 
-A: 1. ele.style
+A: 
+
+1. ele.style
+
 在学习DOM的时候就看到通过 `ele.style` 来获取元素样式值，但是有时候获取的并非是节点的样式值，而是空值。这是因为 `ele.style` 只能获取写在元素标签中的 style 属性里的样式值，无法获取到定义在 `<style></style>` 和通过 `<link href="css.css">` 加载进来的样式属性
 
 例子：
@@ -13,6 +16,7 @@ A: 1. ele.style
 ```
 
 2. getComputedStyle()
+
 `getComputedStyle` 是一个可以获取当前元素所有最终使用的 CSS 属性值。
 
 语法如下：
@@ -87,13 +91,10 @@ window.getComputedStyle(test, null).getAttribute("backgroundColor");
 
 注意：该方法只支持IE6-8
 
- 
 
 小结：
 
 jQuery的CSS()方法，其底层运作就应用了getComputedStyle以及getPropertyValue方法，当我们使用原生的js开发时就可以通过以上方法获取元素的值。
-
- 
 
 下面是一个兼容ie,firefox,chrome等浏览器的获取元素样式的方法，可以应用到项目中
 

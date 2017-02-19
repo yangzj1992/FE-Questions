@@ -1,0 +1,671 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style type="text/css" media="screen">
+    </style>
+</head>
+<body>
+    <div>
+        <ul>
+            <li>红黑树是每个节点都带有颜色属性的二叉查找树，颜色为红色或黑色。在二叉查找树强制一般要求以外，对于任何有效的红黑树我们增加了如下的额外要求：</li>
+            <ul>
+                <li>节点是红色或黑色。</li>
+                <li>根是黑色。</li>
+                <li>所有叶子都是黑色（叶子是NIL节点）。</li>
+                <li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
+                <li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。</li>
+            </ul>
+            <br>
+            <li>请用 , 分割数字, 0 - 999之间的数字</li>
+            <li>双击节点删除</li>
+            <li><input type="button" value="随机增加一个节点" onclick="AddRandom()" /></li>
+        </ul>
+    </div>
+    <div>
+        <input id="numbertext" title="" placeholder="请用,(单字节)分割数字,0-999之间的数字" value="10,40,30,60,90,70,20,50,80" />
+        <input type="button" value="一个一个节点增加" title="增加一个节点" onclick="AddOneNumber()" />
+        <input type="button" value="一次性增加所有节点" title="增加一个节点" onclick="AddAllNumber()" />
+    </div>
+    <br />
+    <div id="currentView"></div>
+    <div id="stepView"></div>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+
+    <script>
+        var NodeColor = { Black: "black", Red: "red" };
+
+        var RBNode = function (_date, _paret, _color) {
+            this.Data = _date;
+            this.Parent = _paret;
+            this.Color = _color;
+            this.LeftNode = null;
+            this.RightNode = null;
+        }
+
+        var RedBlackBinaryTree = function () {
+            this.RootNode = null;//根节点
+
+            this.Insert = function (insertValue) {
+                deformStep = [];
+                if (this.RootNode == null) {
+                    this.RootNode = new RBNode(insertValue, null, NodeColor.Black);
+                } else {
+                    var newNode = insert.call(this, insertValue);
+                    insertFixUp.call(this, newNode);
+                }
+            }
+
+            function insert(key) {
+                var node = this.RootNode;
+
+                var newNode = new RBNode(key, null, NodeColor.Red);
+                while (true) {
+                    if (key > node.Data) {
+                        if (node.RightNode == null) {
+                            newNode.Parent = node;
+                            node.RightNode = newNode;
+                            break;
+                        }
+                        node = node.RightNode;
+                    } else if (key < node.Data) {
+                        if (node.LeftNode == null) {
+                            newNode.Parent = node;
+                            node.LeftNode = newNode;
+                            break;
+                        }
+                        node = node.LeftNode;
+                    } else {
+                        break;
+                    }
+                }
+                return newNode;
+            }
+
+            function insertFixUp(node) {
+                var parentNode = node.Parent;
+                if (parentNode != null && NodeColor.Red == parentNode.Color) {
+                    var gprentNode = parentNode.Parent;
+                    if (parentNode == gprentNode.LeftNode) {
+                        var uncleNode = gprentNode.RightNode;
+                        if (uncleNode != null && NodeColor.Red == uncleNode.Color) {
+                            parentNode.Color = NodeColor.Black;
+                            uncleNode.Color = NodeColor.Black;
+                            gprentNode.Color = NodeColor.Red;
+                            insertFixUp.call(this, gprentNode);
+                        } else {
+                            if (parentNode.RightNode == node) {
+                                leftRotation.call(this, parentNode);
+                                insertFixUp.call(this, parentNode);
+                            } else if (parentNode.LeftNode == node) {
+                                parentNode.Color = NodeColor.Black;
+                                gprentNode.Color = NodeColor.Red;
+                                rightRotation.call(this, gprentNode);
+                            }
+                        }
+                    } else {
+                        var uncleNode = gprentNode.LeftNode;
+                        if (uncleNode != null && NodeColor.Red == uncleNode.Color) {
+                            parentNode.Color = NodeColor.Black;
+                            uncleNode.Color = NodeColor.Black;
+                            gprentNode.Color = NodeColor.Red;
+                            insertFixUp.call(this, gprentNode);
+                        } else {
+                            if (parentNode.LeftNode == node) {
+                                rightRotation.call(this, parentNode);
+                                insertFixUp.call(this, parentNode);
+                            } else if (parentNode.RightNode == node) {
+                                parentNode.Color = NodeColor.Black;
+                                gprentNode.Color = NodeColor.Red;
+                                leftRotation.call(this, gprentNode);
+                            }
+                        }
+                    }
+                }
+                this.RootNode.Color = NodeColor.Black;
+            }
+
+            function leftRotation(node) {
+                var temp = node.RightNode;
+
+                node.RightNode = temp.LeftNode;
+                if (temp.LeftNode != null) {
+                    temp.LeftNode.Parent = node;
+                }
+
+                temp.Parent = node.Parent;
+
+                if (node.Parent == null) {
+                    this.RootNode = temp;
+                }
+                else {
+                    if (node.Parent.LeftNode == node) {
+                        node.Parent.LeftNode = temp;
+                    } else {
+                        node.Parent.RightNode = temp;
+                    }
+                }
+                temp.LeftNode = node;
+                node.Parent = temp;
+            }
+
+            function rightRotation(node) {
+                var temp = node.LeftNode;
+
+                node.LeftNode = temp.RightNode;
+                if (temp.RightNode != null) {
+                    temp.RightNode.Parent = node;
+                }
+
+                temp.Parent = node.Parent;
+
+                if (node.Parent == null) {
+                    this.RootNode = temp;
+                } else {
+                    if (node == node.Parent.RightNode) {
+                        node.Parent.RightNode = temp;
+                    } else {
+                        node.Parent.LeftNode = temp;
+                    }
+                }
+                temp.RightNode = node;
+                node.Parent = temp;
+            }
+
+            this.Remove = function (key) {
+                var node = search.call(this, this.RootNode, key);
+                if (node == null) {
+                    return;
+                } else {
+                    remove.call(this, node);
+                }
+            }
+
+            function remove(node) {
+                var child, parent, nodeColor;
+                if (node.LeftNode != null && node.RightNode != null) {
+                    var tempNode = findMin(node.RightNode);
+
+                    if (node.Parent == null) {
+                        this.RootNode = tempNode;
+                    } else {
+                        if (node.Parent.LeftNode == node) {
+                            node.Parent.LeftNode = tempNode;
+                        } else {
+                            node.Parent.RightNode = tempNode;
+                        }
+                    }
+
+                    child = tempNode.RightNode;
+                    parent = tempNode.Parent;
+                    nodeColor = tempNode.Color;
+
+                    if (parent.Data == node.Data) {
+                        parent = tempNode;
+                    } else {
+                        if (child != null) {
+                            child.Parent = parent;
+                        }
+                        parent.LeftNode = child;
+
+                        tempNode.RightNode = node.RightNode;
+                        node.RightNode.Parent = tempNode;
+                    }
+
+                    tempNode.Parent = node.Parent;
+                    tempNode.Color = node.Color;
+                    tempNode.LeftNode = node.LeftNode
+                    node.LeftNode.Parent = tempNode;
+
+                    if (nodeColor == NodeColor.Black) {
+                        removeFixUp.call(this, child, parent);
+                    }
+                } else {
+
+                    if (node.LeftNode != null) {
+                        child = node.LeftNode;
+                    } else {
+                        child = node.RightNode;
+                    }
+
+                    parent = node.Parent;
+                    nodeColor = node.Color;
+
+                    if (child != null) {
+                        child.Parent = parent;
+                    }
+
+                    if (parent != null) {
+                        if (parent.LeftNode != null && parent.LeftNode.Data == node.Data) {
+                            parent.LeftNode = child;
+                        } else {
+                            parent.RightNode = child;
+                        }
+                    } else {
+                        this.RootNode = child;
+                    }
+
+                    if (nodeColor == NodeColor.Black) {
+                        removeFixUp.call(this, child, parent)
+                    }
+                }
+                node = null;
+            }
+
+            function removeFixUp(node, parentNode) {
+                var otherNode;
+                while ((node == null || node.Color == NodeColor.Black) && (node != this.RootNode)) {
+                    if (parentNode.LeftNode == node) {
+                        otherNode = parentNode.RightNode;
+                        if (otherNode.Color == NodeColor.Red) {
+                            otherNode.Color = NodeColor.Black;
+                            parentNode.Color = NodeColor.Red;
+                            leftRotation.call(this, parentNode);
+                            otherNode = parentNode.RightNode;
+                        }
+
+                        if ((otherNode.LeftNode == null || otherNode.LeftNode.Color == NodeColor.Black) &&
+                           (otherNode.RightNode == null || otherNode.RightNode.Color == NodeColor.Black)) {
+                            otherNode.Color = NodeColor.Red;
+                            node = parentNode;
+                            parentNode = node.Parent;
+                        } else {
+                            if (otherNode.RightNode == null || otherNode.RightNode.Color == NodeColor.Black) {
+                                otherNode.LeftNode.Color == NodeColor.Black;
+                                otherNode.Color = NodeColor.Red;
+                                rightRotation.call(this, otherNode);
+                                otherNode = parentNode.RightNode;
+                            }
+
+                            otherNode.Color = parentNode.Color;
+                            parentNode.Color = NodeColor.Black;
+                            otherNode.RightNode.Color = NodeColor.Black;
+                            leftRotation.call(this, parentNode);
+                            node = this.RootNode;
+                            break;
+                        }
+                    } else {
+                        otherNode = parentNode.LeftNode;
+                        if (otherNode.Color == NodeColor.Red) {
+                            otherNode.Color = NodeColor.Black;
+                            parentNode.Color = NodeColor.Red;
+                            rightRotation.call(this, parentNode);
+                            otherNode = parentNode.LeftNode;
+                        }
+
+                        if ((otherNode.LeftNode == null || otherNode.LeftNode.Color == NodeColor.Black) &&
+                            (otherNode.RightNode == null || otherNode.RightNode.Color == NodeColor.Black)) {
+                            otherNode.Color = NodeColor.Red;
+                            node = parentNode;
+                            parentNode = node.parent;
+                        } else {
+                            if (otherNode.LeftNode == null || otherNode.LeftNode.Color == NodeColor.Black) {
+                                otherNode.RightNode.Color = NodeColor.Black;
+                                otherNode.Color = NodeColor.Red;
+                                leftRotation.call(this, otherNode);
+                                otherNode = parentNode.LeftNode;
+                            }
+
+                            otherNode.Color = parentNode.Color;
+                            parentNode.Color = NodeColor.Black;
+                            otherNode.LeftNode.Color = NodeColor.Black;
+                            rightRotation.call(this, parentNode);
+                            node = this.RootNode;
+                            break;
+                        }
+                    }
+                }
+                if (node != null) {
+                    node.Color = NodeColor.Black;
+                }
+            }
+
+            this.Search = function (key) {
+                return search.call(this, this.RootNode, Key);
+            }
+
+            function search(node, key) {
+                if (node == null) {
+                    return null;
+                }
+
+                if (node.Data > key) {
+                    return search(node.LeftNode, key);
+                } else if (node.Data < key) {
+                    return search(node.RightNode, key);
+                } else {
+                    return node;
+                }
+            }
+
+            this.FindMin = function () {
+                return findMin(this.RootNode);
+            }
+
+            function findMin(node) {
+                if (node.LeftNode == null) {
+                    return node;
+                }
+                return findMin(node.LeftNode);
+            }
+
+            this.FindMax = function () {
+                return findMax(this.RootNode)
+            }
+
+            function findMax(node) {
+                if (node.RightNode == null) {
+                    return node;
+                }
+                return findMax(node.RightNode);
+            }
+
+
+            this.SearchRange = function (minKey, maxKey) {
+                return searchRange(minKey, maxKey, this.RootNode, []);
+            }
+
+            function searchRange(minKey, maxKey, node, nodeList) {
+                if (node == null) {
+                    return nodeList;
+                }
+
+                if (node.Data > minKey) {
+                    searchRange(minKey, maxKey, node.LeftNode, nodeList);
+                }
+
+                if (node.Data >= minKey && node.Data < maxKey) {
+                    nodeList.push(node.Data);
+                }
+
+                if (node.Data < maxKey) {
+                    searchRange(minKey, maxKey, node.RightNode, nodeList);
+                }
+
+                return nodeList;
+            }
+
+            this.LevelOrder = function (action) {
+                levelOrder(this.RootNode, action);
+            }
+
+            function levelOrder(node, action) {
+                var stack = [];
+                stack.push(node);
+
+                while (stack.length > 0) {
+                    var temp = stack.pop();
+
+                    action(temp);
+
+                    if (temp.LeftNode != null) {
+                        stack.push(temp.LeftNode);
+                    }
+
+                    if (temp.RightNode != null) {
+                        stack.push(temp.RightNode);
+                    }
+                }
+            }
+
+
+            this.PreOrder = function (action) {
+                treeOrder(this.RootNode, action, null, null);
+            }
+
+            this.InOrder = function (action) {
+                treeOrder(this.RootNode, null, action, null);
+            }
+
+            this.PostOrder = function (action) {
+                treeOrder(this.RootNode, null, null, action);
+            }
+
+            function treeOrder(node, preOrderAction, inOrderAction, postOrderAction) {
+                if (preOrderAction) {
+                    preOrderAction(node);
+                }
+
+                if (node.LeftNode != null) {
+                    treeOrder(node.LeftNode, preOrderAction, inOrderAction, postOrderAction);
+                }
+
+                if (inOrderAction) {
+                    inOrderAction(node);
+                }
+
+                if (node.RightNode != null) {
+                    treeOrder(node.RightNode, preOrderAction, inOrderAction, postOrderAction);
+                }
+
+                if (postOrderAction) {
+                    postOrderAction(node);
+                }
+            }
+        }
+    </script>
+
+    <script>
+        /// <reference path="C:\Users\思远\documents\visual studio 2013\Projects\ApplicationHost\WebApplication1\easeljs-0.8.2.min.js" />
+
+        var height = 50;//节点之间的高
+        var width = 15;//节点之间的宽
+        var tops = 40;//根节点离顶部的距离
+        var foot = 40;//树离底部距离
+        var spacing = 30;//树分别离两边的间距
+
+        var tree = new RedBlackBinaryTree();
+
+        function AddOneNumber() {
+            var numbertext = document.getElementById("numbertext").value;
+
+            var oneNums = numbertext.match(/[1-9][0-9]{0,2}\,?/);
+            document.getElementById("numbertext").value = numbertext.replace(/[1-9][0-9]{0,2}\,?/, "");
+
+            var num = (oneNums + "").match(/[1-9][0-9]{0,2}/);
+
+            if (num) {
+                AddNumber(parseInt(num));
+            }
+        }
+
+        function AddRandom() {
+            AddNumber(Math.floor(Math.random() * (1000)));
+        }
+
+        function AddAllNumber() {
+            while (true) {
+                AddOneNumber();
+                var numbertext = document.getElementById("numbertext").value;
+                if (!/[1-9][0-9]{0,2}/.test(numbertext)) {
+                    break;
+                }
+            }
+        }
+
+        function AddNumber(number) {
+            tree.Insert(number);
+            RenewView();
+        }
+
+        function DeleteNumber(number) {
+            tree.Remove(number);
+            RenewView();
+        }
+
+        function RenewView() {
+            var currentView = document.getElementById("currentView");
+            currentView.innerHTML = '';
+            CreateTreeView(tree.RootNode, currentView);
+        }
+
+
+        function CreateTreeView(rootNode, hostDocument) {
+            var size = SetCanvasWidthHeight(rootNode);
+
+            var canvas = document.createElement("canvas");
+            canvas.style.backgroundColor = "antiquewhite";
+            canvas.style.display = "block";
+            canvas.height = size.height;
+            canvas.width = size.width;
+
+
+            hostDocument.appendChild(canvas);
+            var stepStage = new createjs.Stage(canvas);
+            SetPoint(rootNode);
+            PreOrder(rootNode, SetPreOrder, stepStage, canvas.width);
+        }
+
+
+        function PreOrder(node, action, stepStage, canvasWidth) {
+            action(node, stepStage, canvasWidth);
+
+            if (node.LeftNode != null) {
+                PreOrder(node.LeftNode, action, stepStage, canvasWidth);
+            }
+
+            if (node.RightNode != null) {
+                PreOrder(node.RightNode, action, stepStage, canvasWidth);
+            }
+        }
+
+
+        function SetCanvasWidthHeight(rootNode) {
+            var level = Level(rootNode);
+            return {
+                height: height * level + tops + foot,
+                width: Math.pow(2, level + 1) * width + spacing * 2
+            };
+        }
+
+        function SetPreOrder(node, stepStage, canvasWidth) {
+            var container = CreateNode(
+                node.Data,
+                canvasWidth / 2 + width * node.nodePoint,
+                (node.nodeLevel * height + parseInt(tops)),
+                node.Color);
+            stepStage.addChild(container);
+
+            if (node.Parent != null) {
+                var line = CreateLineTo(
+                    (canvasWidth / 2 + width * node.Parent.nodePoint),
+                    (node.Parent.nodeLevel * height + parseInt(tops)),
+                    (node.Data, canvasWidth / 2 + width * node.nodePoint),
+                    (node.nodeLevel * height + parseInt(tops)));
+                stepStage.addChild(line);
+            }
+            stepStage.update();
+        }
+
+        //color=gray red yellow blue  black
+        function CreateNode(number, x, y, color) {
+            var textX = 0;
+            if (number < 10) {
+                textX = -5;
+            } else if (number > 9 && number < 100) {
+                textX = -9;
+            } else {
+                textX = -14;
+            }
+            var text = new createjs.Text(number, "16px Arial", "#fff");
+            text.x = textX;
+            text.y = -8;
+
+            var graphics = new createjs.Graphics();
+            graphics.setStrokeStyle(1);
+            graphics.beginStroke(createjs.Graphics.getRGB(0, 0, 255));
+            graphics.beginFill(color);
+            graphics.drawCircle(0, 0, 15);
+            var shape = new createjs.Shape(graphics);
+
+            var container = new createjs.Container();
+            container.x = x;
+            container.y = y;
+            container.addChild(shape, text);
+
+            container.addEventListener("dblclick", function () {
+                DeleteNumber(parseInt(text.text));
+            });
+
+            return container;
+        }
+
+        function CreateLineTo(fatherNodex, fatherNodey, childrenNodex, childrenNodey) {
+            var sp = new createjs.Shape();
+            sp.graphics.s("blue").ss(2).mt(fatherNodex, fatherNodey + 15).lt(childrenNodex, childrenNodey - 15).es();//线
+            return sp;
+        }
+
+
+
+
+        var maxLevel;
+        var level;
+        function Level(rootNode) {
+            maxLevel = 0;
+            level = 0;
+            return levels(rootNode);
+        }
+
+        function levels(node) {
+            if (node.LeftNode != null) {
+                level++;
+                levels(node.LeftNode);
+            }
+            maxLevel = Math.max(maxLevel, level);
+
+            if (node.RightNode != null) {
+                level++;
+                levels(node.RightNode);
+            }
+            level--;
+            return maxLevel;
+        }
+
+        function SetPoint(rootNode) {
+            var thisMaxLevel = Level(rootNode);
+            var childQuanty = Math.pow(2, thisMaxLevel);
+
+            rootNode.nodeLevel = 0;
+            rootNode.nodePoint = 0;
+
+            if (rootNode.LeftNode != null) {
+                setPointsLeft(rootNode.LeftNode, -1 * childQuanty / 2, 0, thisMaxLevel - 1);
+            }
+
+            if (rootNode.RightNode != null) {
+                setPointsRight(rootNode.RightNode, childQuanty / 2, 0, thisMaxLevel - 1);
+            }
+        }
+
+        function setPointsLeft(node, point, levels, thisMaxLevel) {
+            ++levels;
+            node.nodeLevel = levels;
+            node.nodePoint = point;
+
+            if (node.LeftNode != null) {
+                setPointsLeft(node.LeftNode, point - Math.pow(2, thisMaxLevel - levels), levels, thisMaxLevel);
+            }
+
+            if (node.RightNode != null) {
+                setPointsLeft(node.RightNode, point + Math.pow(2, thisMaxLevel - levels), levels, thisMaxLevel);
+            }
+        }
+
+        function setPointsRight(node, point, levels, thisMaxLevel) {
+            ++levels;
+            node.nodeLevel = levels;
+            node.nodePoint = point;
+
+            if (node.LeftNode != null) {
+                setPointsRight(node.LeftNode, point - Math.pow(2, thisMaxLevel - levels), levels, thisMaxLevel);
+            }
+
+            if (node.RightNode != null) {
+                setPointsRight(node.RightNode, point + Math.pow(2, thisMaxLevel - levels), levels, thisMaxLevel);
+            }
+        }
+    </script>
+</body>
+</html>
