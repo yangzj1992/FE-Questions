@@ -9,6 +9,13 @@ t.prototype  = Array.prototype
 var x = new t();
 alert(x instanceof Array);//弹出true
 
+Q: 判断 isNumber
+
+``` js
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+```
 
 Q : 
 
