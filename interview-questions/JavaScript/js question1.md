@@ -141,3 +141,8 @@ document.all (或document.getElementsByTagName('*') )能取得当前页面所有
 听说还有其他方式，我首先想到的是这个方式而已。
 
 `Array.from(new Set(Array.from(document.querySelectorAll('*')).map(({tagName})=> tagName.toLowerCase())))`
+
+```
+let arr = [3,5,2,2,5,5];
+let unique = [...new Set(arr)];    //[3,5,2]
+```
